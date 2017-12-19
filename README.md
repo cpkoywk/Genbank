@@ -1,6 +1,6 @@
 # Genbank Fall 2017
 
-Sarah Elaine Bratt, Pan Chen, Suchitra Deekshitula, Jian Qin, Jeffrey Joe Hemsley
+Jian Qin, Jeffrey Joe Hemsley, Sarah Elaine Bratt, Pan Chen, Suchitra Deekshitula, 
 
 ## Objective: 
 To parse, munge, transform two large tables for the purpose of disambiguating authors in Scientometric Metadata:
