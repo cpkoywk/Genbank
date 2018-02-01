@@ -1,0 +1,130 @@
+---
+title: "Week1: Parsing Cleaning Transforming ReferencePatent table"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+```{r}
+#Load Necessary packages
+library(reshape2)
+library(plyr)
+library(dbConnect)
+#library(ggplot2)
+#library(ggmap)
+library(lubridate)
+library('splitstackshape')
+
+```
+# Parsing Cleaning Transforming ReferencePatent table
+## Objective:
+We are trying to parse the original ReferencePatent table into a final output table, which contains the following attributes: id, authors (original field), title, patentType (e.g. EP, US, GB), PatentNumber (e.g. 0238993), version (e.g. -A2 1), patentDay, PatentMonth, PatentYear, extra_journal (the leftover data that comes after the semi-colon or that is  not any of the previously indicated patent data), and then the parsed author names (one per column (e.g. Author 1, Author 2, Author 3). 
+
+### Get the Reference Patent table from the SQL server
+```{r}
+#uncomment next line for the real thing
+#ReferencePatent<-dbGetQuery(con,'select * from genbank.ReferencePatent')
+ReferencePatent<-read.csv('data/ReferencePatent1000.csv',row.names=1)
+```
+### Parse Author Column:
+```{r}
+#Split Author names of the real set
+paste("the original column:")
+head(ReferencePatent$authors,10)
+#eliminate "\t"
+authorsplit<-gsub("\t", " ", ReferencePatent$authors, fixed=TRUE)
+#head(authorsplit)
+#eliminate "and"
+authorsplit<-gsub(" and ", ", ", authorsplit, fixed=TRUE)
+#head(authorsplit)
+#split it by ", " because two author names are split by ", "
+authorsplit<-strsplit(authorsplit,", ")
+#the number of authors the patent with most authors has
+paste("the number of authors the patent with most authors has:", max(unlist(lapply(authorsplit, function(x) length(x)))))
+    
+#The result
+paste("the parsed column:")
+head(authorsplit)
+```
+### Transpose the Author column:
+For an author cell like 
+
+| Author                            |   |
+|-----------------------------------|---|
+| 'Kozlov,J.I.' 'Naroditskaya,V.A.' |   |
+
+we want to separate it into two separate cells
+
+| Author                            | Author1     | Author2             |
+|-----------------------------------|-------------|---------------------|
+| 'Kozlov,J.I.' 'Naroditskaya,V.A.' | Kozlov,J.I. | 'Naroditskaya,V.A.' |
+```{r}
+#Create a new dataframe for this task:
+pat<-as.data.frame(ReferencePatent$authors)
+#Write a for loop to populate the tranposed author columns
+for (i in 1:max(unlist(lapply(authorsplit, function(x) length(x))))){
+  eval(parse(text = paste0('pat$Author', i, ' <- sapply(authorsplit,function(x) x[i])')))
+}
+
+head(pat)
+```
+### Parse content out of the journal column:
+```{r}
+#1. parse patentType out of journal column
+head(ReferencePatent$journal,10)
+#sub "\t" and split the journal column by ' '
+journal<-strsplit(gsub("\t", " ", ReferencePatent$journal, fixed=TRUE)," ")
+head(journal,10)
+#the second part of each row of 'journal' list is the patenttype that we need
+pat$patentType<-sapply(journal,function(x) x[2])
+head(pat$patentType,10)
+#2. parse patent number out of journal column
+head(journal)
+patentNumber<-strsplit(sapply(journal,function(x) x[3]), "-")
+pat$patentNumber<-sapply(patentNumber,function(x) x[[1]])
+head(pat$patentNumber)
+#3. parse patentVersion (something like -A2 1) out of journal column
+head(journal)
+version1<-sapply(patentNumber,function(x) x[2])
+head(version1)
+version2<-sapply(journal,function(x) x[4])
+head(version2)
+#mapply is kind of like zip in python
+version3<-mapply(c, version1, version2, SIMPLIFY=FALSE)
+#head(version3)
+pat$patentVersion<-as.vector(sapply(version3,function(x) paste(x[1],x[2])))
+head(pat$patentVersion)
+#4. patentDay, patentmonth, patent year (requires 'lubridate')
+head(journal)
+fulldate<-dmy(sapply(journal,function(x) x[5]))
+pat$patentYear<-year(fulldate)
+pat$patentMonth<-month(fulldate)
+pat$patentDay<-day(fulldate)
+#5. split the journal column on the first occrence of ";\t" to get extra portion of the journal
+patentExtra<-as.vector(colsplit(ReferencePatent$journal,";\t",c("a","b"))[2])
+pat$patentExtra<-patentExtra$b
+head(pat$patentExtra)
+#Final Results
+head(pat)
+```
+We are only going to need the 
+
+# 2. Transforming Reference Table:
+Parse the genbank.reference table in the same way I did the ReferencePatent Table: keep the id, title, journal, authororginal, author1,2,3,4,pubmed,year,reference
+
+```{r}
+Reference<-dbGetQuery(con,'select * from genbank.Reference')
+colnames(Reference)
+colnames(parsedReference)
+parsedReference<-as.data.frame(Reference$id)
+parsedReference$title<-Reference$title
+parsedReference$reference<-Reference$reference
+parsedReference$origauthors<-Reference$authors
+parsedReference$consortium<-Reference$consortium
+parsedReference$journal<-Reference$journal
+parsedReference$pubmed<-Reference$pubmed
+parsedReference$remark<-Reference$remark
+parsedReference$year<-Reference$year
+parsedReference$new_id<-Reference$new_id
+
+'''

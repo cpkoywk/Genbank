@@ -1,0 +1,5 @@
+"0","pat<-as.data.frame(ReferencePatent$authors)
+"
+"2","Error in as.data.frame(ReferencePatent$authors) : 
+  object 'ReferencePatent' not found
+"

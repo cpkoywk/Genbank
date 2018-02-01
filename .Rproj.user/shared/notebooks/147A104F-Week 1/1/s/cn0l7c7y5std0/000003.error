@@ -1,0 +1,1 @@
+{"frames":[{"character_number":0,"end_character_number":0,"end_line_number":0,"file":"","func":"as.data.frame(ReferencePatent$authors)","line_number":0}],"message":"Error in as.data.frame(ReferencePatent$authors) : \n  object 'ReferencePatent' not found\n"}
