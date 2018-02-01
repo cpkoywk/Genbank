@@ -7,7 +7,6 @@ output: html_document
 ## Load "week 12 Data.RData", and we will go from there:
 Let's see what do we have now:
 ```{r}
-setwd('/data/rstudio10/Pan_Stuff/Documentation')
 tmp1<-head(disambReference,1000)
 tmp2<-head(disambintlpatref,1000)
 ```
@@ -38,21 +37,23 @@ if it works correctly, match1 would be a table whose rows represent all of the p
 nummatch column represents the number of the coauthor matches between the (FName, LName) matching reference and patent.
 
 ```{r}
-match1<-merge(disambReference, disambIntlpatref, by.x = c("Fname","Lname"), by.y = c("Fname","Lname"), all.x = FALSE, all.y = FALSE)
-match1$nummatch<-apply(match1, 1, f)
+match<-merge(disambReference, disambIntlpatref, by.x = c("Fname","Lname"), by.y = c("Fname","Lname"), all.x = FALSE, all.y = FALSE)
+match$nummatch<-apply(match1, 1, f)
 ```
 TODO:
+However, what we got stuck at the end of the last semester (Fall 2017) is, this method did not seem to be able to disambiguate the following scenario:
 
-However, what we got stuck at the end of the last semester is:
-this method did not seem to be able to disambiguate the following scenario:
 Assume we have a Reference Table, which has three records
-R1. Sarah, Pan
-R2. Sarah, Jeff
-R3. Sarah, Pan, Jeff
 
-Assume we have a Patent Table, which has 1 record
-P1. Pan, Jeff
+R1. Sarah, Pan  
+R2. Sarah, Jeff  
+R3. Sarah, Pan, Jeff  
+
+Assume we have a Patent Table, which has 1 record  
+P1. Pan, Jeff  
 
 From this method, it looks like Pan from R1 and Pan from P1 are the same Pan, and Jeff from R2 and Jeff from P1 are the same Jeff, because they both worked with a "Sarah", but with the current workflow, they would not be disambiguated. Only R3's Pan and Jeff would be disambiguated.
 
 I think this could be a starting point of one of the things to work on for the future.
+
+And the parsed tables (disambReference, disambIntlpatref) can be found in week 12 Data.RData in RStudio10. 
