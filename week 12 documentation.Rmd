@@ -9,20 +9,23 @@ The two tables (disambReference,disambintlpatref) with 'coauthor' columns are in
 
 What we have in MySQL server now is the test.disambReference,test.disamb_IntlPatentReference tables in the disambiguation format without the coauthor columns
 
-To generate the coauthor column from test.disambReference,test.disamb_IntlPatentReference tables, please follow the R code [**here**](https://www.google.com)
+To generate the coauthor column from test.disambReference,test.disamb_IntlPatentReference tables, please follow the R code [**here**](https://github.com/cpkoywk/Genbank/blob/master/Week%2010%20-%20Generating%20Coauthor%20Column.R)
 
-Let's see what do we have now:
+## What do we have at the end of the Fall 2017 Semester
+Assume we have loaded week 12 Data.RData from rstudio10
 ```{r}
-tmp1<-head(disambReference,1000)
-tmp2<-head(disambintlpatref,1000)
+#please kindly unquote these...
+# tmp1<-head(disambReference,1000)
+# tmp2<-head(disambintlpatref,1000)
 ```
 Their "coauthor" column is another dataset, so each of these dataframe has a dataframe within it
 Flatten them so they could be exported to csv.
 ```{r}
-tmp1$coauthor<-sapply(tmp1$coauthor, FUN = function(x) paste(x,collapse = ', ',sep=''))
-tmp2$coauthor<-sapply(tmp2$coauthor, FUN = function(x) paste(x,collapse = ', ',sep=''))
-write.csv(tmp1,file = 'data/disambReference_sample.csv')
-write.csv(tmp2,file = 'data/disambIntlpatref_sample.csv')
+#unquote these...
+#tmp1$coauthor<-sapply(tmp1$coauthor, FUN = function(x) paste(x,collapse = ', ',sep=''))
+#tmp2$coauthor<-sapply(tmp2$coauthor, FUN = function(x) paste(x,collapse = ', ',sep=''))
+#write.csv(tmp1,file = 'data/disambReference_sample.csv')
+#write.csv(tmp2,file = 'data/disambIntlpatref_sample.csv')
 ```
 Now let's work primarily with our exported sample datasets
 ```{r}
@@ -31,7 +34,7 @@ disambIntlpatref<-read.csv('data/disambIntlpatref_sample.csv',row.names = 1)
 head(disambReference)
 head(disambIntlpatref)
 ```
-Here's the code for the co-author matching function:
+Here's the code for the co-author matching function between disambReference and disambIntlpatref tables:
 ```{r}
 f <- function(x) {
 b<-sapply(X = x[[8]], FUN = function (X) { grep(X, x[[15]], ignore.case = TRUE, fixed = TRUE, perl=FALSE) }, simplify = "array")
@@ -45,8 +48,8 @@ if it works correctly, match1 would be a table whose rows represent all of the p
 nummatch column represents the number of the coauthor matches between the (FName, LName) matching reference and patent.
 
 ```{r}
-match<-merge(disambReference, disambIntlpatref, by.x = c("Fname","Lname"), by.y = c("Fname","Lname"), all.x = FALSE, all.y = FALSE)
-match$nummatch<-apply(match1, 1, f)
+#match<-merge(disambReference, disambIntlpatref, by.x = c("Fname","Lname"), by.y = c("Fname","Lname"), all.x = FALSE, all.y = FALSE)
+#match$nummatch<-apply(match1, 1, f)
 ```
 TODO:
 However, what we got stuck at the end of the last semester (Fall 2017) is, this method did not seem to be able to disambiguate the following scenario:
