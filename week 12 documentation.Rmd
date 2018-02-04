@@ -4,7 +4,13 @@ author: "Pan Chen"
 date: "1/19/2018"
 output: html_document
 ---
-## Load "week 12 Data.RData", and we will go from there:
+## Where are the tables?
+The two tables (disambReference,disambintlpatref) with 'coauthor' columns are in "week 12 Data.RData", the reason they are not exported or pushed to our MySQL server is because 'coauthor' column is a dataframe which resides in a dataframe to make the coauthor matching function work, so they are not "exportable" flat 2-D tables.
+
+What we have in MySQL server now is the test.disambReference,test.disamb_IntlPatentReference tables in the disambiguation format without the coauthor columns
+
+To generate the coauthor column from test.disambReference,test.disamb_IntlPatentReference tables, please follow the R code [**here**](https://www.google.com)
+
 Let's see what do we have now:
 ```{r}
 tmp1<-head(disambReference,1000)
@@ -22,6 +28,8 @@ Now let's work primarily with our exported sample datasets
 ```{r}
 disambReference<-read.csv('data/disambReference_sample.csv',row.names = 1)
 disambIntlpatref<-read.csv('data/disambIntlpatref_sample.csv',row.names = 1)
+head(disambReference)
+head(disambIntlpatref)
 ```
 Here's the code for the co-author matching function:
 ```{r}
