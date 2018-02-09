@@ -13,6 +13,8 @@ This github chronicles the coauthor matching approach we took to disambiguate mi
 
 [Week 1 - Parsing and transforming ReferencePatent table](https://github.com/cpkoywk/Genbank/blob/master/Week%201.ipynb)  
 [Week 2 - Parsing and transforming Reference Table table](https://github.com/cpkoywk/Genbank/blob/master/Week%201.ipynb)  
+[Week 3 - Parsing intl disambPatref table](https://github.com/cpkoywk/Genbank/blob/master/Week%201.ipynb)  
+[Week 3 - Week 7 - Find Solo Authors in Intlpatref  ](https://github.com/cpkoywk/Genbank/blob/master/Week%201.ipynb)  
 [Week 10: Generating the coauthor columns ](https://github.com/cpkoywk/Genbank/blob/master/Week%2010%20-%20Generating%20Coauthor%20Column.R)  
-[Week 12: Matching the coauthors and end summary ](https://github.com/cpkoywk/Genbank/blob/master/week%2012%20documentation.Rmd)
+[Week 12: Matching the coauthors ](https://github.com/cpkoywk/Genbank/blob/master/week%2012%20documentation.Rmd)  
 [Summary (html)](https://github.com/cpkoywk/Genbank/blob/master/End%20of%20Fall%202017%20Summary.html)
